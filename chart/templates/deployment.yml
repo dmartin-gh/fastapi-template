@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-template
+spec:
+  selector:
+    matchLabels:
+      app: fastapi-template
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: fastapi-template
+    spec:
+      containers:
+        - name: fastapi-template
+          image: fastapi-template:{{ .Values.image.version }}
+          env:
+            - name: POSTGRES_SERVER
+              value: {{ .Values.postgres.hostname }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.database }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.password }}
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /api/fastapi-template/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/fastapi-template/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10

@@ -1,0 +1,45 @@
+name: Continuous Build
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/cache@v3
+        with:
+          path: .mypy_cache
+          key: mypy-${{ runner.os }}
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: poetry
+
+      - name: Install dependencies
+        run: poetry install -vvv
+
+      - name: Run format checks
+        run: poetry run poe format-check
+
+      - name: Run type checks
+        run: poetry run poe type-check
+
+      - name: Run unit tests
+        run: |
+          poetry run poe tests
+
+      - name: Run helm lint
+        run: helm lint --strict chart/
