@@ -7,7 +7,7 @@ from fastapi_template.models.example import ExampleResponse
 router = APIRouter()
 
 
-@router.get("/example", response_model=ExampleResponse)
+@router.get("/example", response_model=list[ExampleResponse])
 async def get_example_data(
     service: ExampleService = Depends(ExampleService),
 ) -> list[Example]:

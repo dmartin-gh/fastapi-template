@@ -68,9 +68,8 @@ async def engine(postgres) -> AsyncIterator[AsyncEngine]:
 
 
 @pytest.fixture
-async def cli(engine: AsyncEngine, auth_token: str) -> AsyncIterator[TestClient]:
+async def cli(engine: AsyncEngine) -> AsyncIterator[TestClient]:
     with TestClient(create_app()) as client:
-        client.headers["Authorization"] = f"Bearer {auth_token}"
         yield client
 
     # Truncate all tables for next test (faster than drop all => create all)
