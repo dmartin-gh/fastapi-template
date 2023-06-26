@@ -38,8 +38,7 @@ jobs:
         run: poetry run poe type-check
 
       - name: Run unit tests
-        run: |
-          poetry run poe tests
+        run: poetry run poe tests
 
       - name: Run helm lint
         run: helm lint --strict chart/
